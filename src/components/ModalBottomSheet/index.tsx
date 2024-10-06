@@ -10,7 +10,6 @@ import styles from "./styles.module.css";
  * @description Cвайпер, отображающий контент с возможностью кастомизации бара.
  *
  * @param {boolean} visible - Определяет, виден ли свайпер.
- * @param {() => void} onHide - Функция, вызываемая для скрытия свайпера.
  * @param {React.ReactNode} children - Контент, который будет отображаться внутри свайпера.
  * @param {number} [transition=200] - Длительность анимации перехода (в миллисекундах). По умолчанию 200мс.
  * @param {number} [minHeight=200] - Минимальная высота свайпера (в пикселях). По умолчанию 200px.
@@ -18,6 +17,7 @@ import styles from "./styles.module.css";
  * @param {string} [classNameBar] - CSS-класс для кастомного бара.
  * @param {string} [classNameBarContainer] - CSS-класс для контейнера бара.
  * @param {string} [classNameModalContainer] - CSS-класс для контейнера свайпера.
+ * @param {boolean} [propagateSwipe] - Позволяет событиям смахивания распространяться на дочерние элементы
  * @param {React.ReactNode} [customBar] - Кастомный элемент бара.
  * @param {() => void} [onModalHide] - Колбэк, вызываемый при скрытии модального окна.
  * @param {() => void} [onModalShow] - Колбэк, вызываемый при показе модального окна.
@@ -25,12 +25,12 @@ import styles from "./styles.module.css";
  * @param {(event: React.TouchEvent | React.MouseEvent) => void} [onMoveEnd] - Колбэк, вызываемый при завершении перетаскивания.
  * @param {(event: React.TouchEvent | React.MouseEvent) => void} [onSwipeComplete] - Колбэк, вызываемый при завершении свайпа (когда высота превышает максимальную).
  * @param {(event: React.TouchEvent | React.MouseEvent) => void} [onSwipeCancel] - Колбэк, вызываемый при отмене свайпа (когда высота меньше минимальной).
+ * @param {() => void} [onBackdropClick] - Функция, вызываемая при нажатии на задний фон.
  * @returns {JSX.Element} Возвращает JSX элемент компонента `ModalBottomSheet`.
  */
 
 export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
     visible,
-    onHide,
     children,
     transition = 200,
     minHeight,
@@ -39,12 +39,14 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
     classNameBarContainer,
     classNameModalContainer,
     customBar,
+    propagateSwipe,
     onModalHide,
     onModalShow,
     onMoveStart,
     onMoveEnd,
     onSwipeComplete,
     onSwipeCancel,
+    onBackdropClick,
 }) => {
     const { height: windowHeight } = useWindowDimensions();
     const [shouldRender, setShouldRender] = useState(visible);
@@ -101,7 +103,6 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
             if (windowHeight * 0.2 >= height) {
                 isResizing.current = false;
                 onSwipeCancel && onSwipeCancel(event);
-                onHide();
             } else if (currentMaxHeight >= height - deltaY) {
                 setHeight((prevHeight) => prevHeight - deltaY);
                 swipeCompleted.current = false;
@@ -146,7 +147,7 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
                     className={styles.back}
                     onMouseDown={(e) => {
                         if (e.target === e.currentTarget) {
-                            onHide();
+                            onBackdropClick && onBackdropClick();
                         }
                     }}
                     style={{
@@ -173,11 +174,21 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
                         onClick={(event) => event.stopPropagation()}
                         ref={swiperRef}
                         onTransitionEnd={onAnimationEnd}
+                        onMouseDown={
+                            propagateSwipe ? handleEventStart : undefined
+                        }
+                        onTouchStart={
+                            propagateSwipe ? handleEventStart : undefined
+                        }
                     >
                         <div
                             className={`${styles.barContainer} ${classNameBarContainer}`}
-                            onMouseDown={handleEventStart}
-                            onTouchStart={handleEventStart}
+                            onMouseDown={
+                                !propagateSwipe ? handleEventStart : undefined
+                            }
+                            onTouchStart={
+                                !propagateSwipe ? handleEventStart : undefined
+                            }
                         >
                             {customBar ? (
                                 customBar

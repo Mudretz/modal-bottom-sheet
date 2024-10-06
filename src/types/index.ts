@@ -32,17 +32,18 @@ type CustomBar =
 
 export type ModalBottomSheetProps = {
     visible: boolean;
-    onHide: () => void;
     children: React.ReactNode;
     transition?: number;
     maxHeight?: number;
     minHeight?: number;
     classNameModalContainer?: string;
     classNameBarContainer?: string;
+    propagateSwipe?: boolean;
     onModalHide?: () => void;
     onModalShow?: () => void;
     onMoveStart?: (event: React.TouchEvent | React.MouseEvent) => void;
     onMoveEnd?: (event: React.TouchEvent | React.MouseEvent) => void;
     onSwipeComplete?: (event: React.TouchEvent | React.MouseEvent) => void;
     onSwipeCancel?: (event: React.TouchEvent | React.MouseEvent) => void;
+    onBackdropClick?: () => void;
 } & CustomBar;

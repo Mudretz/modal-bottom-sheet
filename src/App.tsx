@@ -28,7 +28,6 @@ function App() {
             </div>
             <ModalBottomSheet
                 visible={visible}
-                onHide={() => setVisible(false)}
                 transition={500}
                 onModalHide={() => {
                     console.log("@onModalHide Модальное окно закрыто");
@@ -47,6 +46,10 @@ function App() {
                 }}
                 onSwipeCancel={() => {
                     console.log("@onSwipeCancel Достиг минимальной высоты");
+                    setVisible(false);
+                }}
+                onBackdropClick={() => {
+                    setVisible(false);
                 }}
             >
                 <div className='content'>{TEXT_LOREM}</div>
