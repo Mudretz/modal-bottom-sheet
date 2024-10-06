@@ -1,9 +1,9 @@
-import { createPortal } from "react-dom";
 import { FC, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { isTouchEvent } from "../../utils/isTouchEvent";
+import { ModalBottomSheetProps } from "../../types";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import styles from "./styles.module.css";
-import { ModalBottomSheetProps } from "../../types";
 
 /**
  * @name ModalBottomSheet
@@ -134,7 +134,7 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
                     onTouchEnd={handleEventEnd}
                 >
                     <div
-                        className={`${styles.swiperContainer} ${classNameModalContainer}`}
+                        className={`${styles.modalContainer} ${classNameModalContainer}`}
                         style={{
                             height: visible ? height : 0,
                             transition: isResizing.current
