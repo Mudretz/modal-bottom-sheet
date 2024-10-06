@@ -1,7 +1,6 @@
 .back {
     position: fixed;
     top: 0;
-    transition: background-color 300ms;
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.3);
@@ -19,7 +18,7 @@
     -webkit-box-shadow: 0px -5px 10px 1px rgba(34, 60, 80, 0.26);
     -moz-box-shadow: 0px -5px 10px 1px rgba(34, 60, 80, 0.26);
     box-shadow: 0px -5px 10px 1px rgba(34, 60, 80, 0.26);
-    overflow-x: auto;
+    overflow: hidden;
 }
 
 .modalContainer::-webkit-scrollbar {
@@ -45,4 +44,8 @@
 
 .children {
     flex: 1;
+}
+
+.children::-webkit-scrollbar {
+    display: none; /* Для Chrome, Safari и других WebKit-браузеров */
 }

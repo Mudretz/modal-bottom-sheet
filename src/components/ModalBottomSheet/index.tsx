@@ -55,7 +55,6 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
     const startY = useRef(0);
     const swiperRef = useRef<HTMLDivElement>(null);
     const childrenRef = useRef<HTMLDivElement>(null);
-    const swipeCompleted = useRef(false);
     const currentMinHeight = minHeight ? minHeight : windowHeight * 0.3;
     const currentMaxHeight = maxHeight ? maxHeight : windowHeight * 0.8;
 
@@ -85,12 +84,16 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
                     } else if (height > currentMaxHeight) {
                         setHeight(currentMaxHeight);
                     }
+                    childrenRef.current.style.overflowX = "auto";
                 }
             });
             document.body.style.overflow = "hidden"; // Убираем скролл заднего фона
         }
         return () => {
             document.body.style.overflow = "";
+            if (childrenRef.current) {
+                childrenRef.current.style.overflowX = "";
+            }
         };
     }, [visible]);
 
@@ -99,21 +102,18 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
             ? event.touches[0].clientY
             : event.clientY;
         if (isResizing.current && swiperRef.current) {
+            swiperRef.current.style.overflow = "hidden";
             const deltaY = clientY - startY.current; // Разница в положении курсора
-            if (windowHeight * 0.2 >= height) {
+            if (windowHeight * 0.2 >= height - deltaY) {
                 isResizing.current = false;
                 onSwipeCancel && onSwipeCancel(event);
             } else if (currentMaxHeight >= height - deltaY) {
                 setHeight((prevHeight) => prevHeight - deltaY);
-                swipeCompleted.current = false;
-                startY.current = clientY; // Обновление позиции курсора
-            } else if (
-                currentMaxHeight <= height - deltaY &&
-                !swipeCompleted.current
-            ) {
+            } else if (currentMaxHeight <= height - deltaY) {
                 onSwipeComplete && onSwipeComplete(event);
-                swipeCompleted.current = true;
+                isResizing.current = false;
             }
+            startY.current = clientY;
         }
     };
 
@@ -132,6 +132,9 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
             onMoveEnd && onMoveEnd(event);
         }
         isResizing.current = false; // Завершение перетаскивания
+        if (swiperRef.current) {
+            swiperRef.current.style.overflow = "";
+        }
     };
 
     const renderChildren = useMemo(() => {
@@ -154,6 +157,9 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
                         backgroundColor: visible
                             ? "rgba(0, 0, 0, 0.3)"
                             : "rgba(0, 0, 0, 0)",
+                        transition: transition
+                            ? `background-color ${transition}ms`
+                            : `background-color ${1}ms`,
                     }}
                     onMouseMove={handleEventMove}
                     onMouseUp={handleEventEnd}
