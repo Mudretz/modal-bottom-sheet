@@ -86,7 +86,7 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
                     }
                     childrenRef.current.style.overflowX = "auto";
                 }
-            });
+            }, 50);
             document.body.style.overflow = "hidden"; // Убираем скролл заднего фона
         }
         return () => {
@@ -168,7 +168,7 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
                     onTouchEnd={handleEventEnd}
                 >
                     <div
-                        className={`${styles.modalContainer} ${classNameModalContainer}`}
+                        className={`${styles.modalContainer} ${classNameModalContainer ? classNameModalContainer : ""}`}
                         style={{
                             height: visible ? height : 0,
                             transition: isResizing.current
@@ -188,7 +188,7 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
                         }
                     >
                         <div
-                            className={`${styles.barContainer} ${classNameBarContainer}`}
+                            className={`${styles.barContainer} ${classNameBarContainer ? classNameBarContainer : ""}`}
                             onMouseDown={
                                 !propagateSwipe ? handleEventStart : undefined
                             }
@@ -200,7 +200,7 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
                                 customBar
                             ) : (
                                 <div
-                                    className={`${styles.bar} ${classNameBar}`}
+                                    className={`${styles.bar} ${classNameBar ? classNameBar : ""}`}
                                 />
                             )}
                         </div>
