@@ -44,7 +44,7 @@ npm install github:Mudretz/modal-bottom-sheet
 
 ```tsx
 import React, { useState } from 'react';
-import { ModalBottomSheet } from './ModalBottomSheet';
+import ModalBottomSheet from "modal-bottom-sheet";
 
 const ExampleComponent = () => {
   const [isVisible, setIsVisible] = useState(false);
