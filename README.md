@@ -16,6 +16,10 @@
 ```
 npm install github:Mudretz/modal-bottom-sheet
 ```
+Установка конкретной версии
+```
+npm install github:Mudretz/modal-bottom-sheet#v1.0.0
+```
 
 ## Props
 
