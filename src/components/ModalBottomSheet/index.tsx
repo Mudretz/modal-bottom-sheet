@@ -28,7 +28,7 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
     onHide,
     children,
     transition = 200,
-    minHeight = 200,
+    minHeight,
     maxHeight,
     classNameBar,
     classNameBarContainer,
@@ -58,26 +58,27 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
             setShouldRender(true); // Рендерим элемент при показе
             setTimeout(() => {
                 if (childrenRef.current) {
-                    const { height } =
+                    const { height: testHeight } =
                         childrenRef.current.getBoundingClientRect();
+                    console.log(testHeight, "@@tetestHeight");
                     if (
-                        height >= currentMinHeight &&
-                        height <= currentMaxHeight
+                        testHeight >= currentMinHeight &&
+                        testHeight <= currentMaxHeight
                     ) {
-                        setHeight(height);
-                    } else if (height < currentMinHeight) {
+                        setHeight(testHeight);
+                    } else if (testHeight < currentMinHeight) {
                         setHeight(currentMinHeight);
-                    } else if (height > currentMaxHeight) {
+                    } else if (testHeight > currentMaxHeight) {
                         setHeight(currentMaxHeight);
                     }
                 }
-            }, transition);
+            });
             document.body.style.overflow = "hidden"; // Убираем скролл заднего фона
         }
         return () => {
             document.body.style.overflow = "";
         };
-    }, [visible, childrenRef.current]);
+    }, [visible]);
 
     const handleEventMove = (event: React.TouchEvent | React.MouseEvent) => {
         const clientY = isTouchEvent(event)
@@ -132,9 +133,10 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
                     onMouseLeave={handleEventEnd}
                     onTouchMove={handleEventMove}
                     onTouchEnd={handleEventEnd}
+                    data-testid='bottom-modal-background'
                 >
                     <div
-                        className={`${styles.modalContainer} ${classNameModalContainer}`}
+                        className={`${styles.modalContainer} ${classNameModalContainer ? classNameModalContainer : ""}`}
                         style={{
                             height: visible ? height : 0,
                             transition: isResizing.current
@@ -146,17 +148,20 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
                         onClick={(event) => event.stopPropagation()}
                         ref={swiperRef}
                         onTransitionEnd={onAnimationEnd}
+                        data-testid='bottom-modal-container'
                     >
                         <div
-                            className={`${styles.barContainer} ${classNameBarContainer}`}
+                            className={`${styles.barContainer} ${classNameBarContainer ? classNameBarContainer : ""}`}
                             onMouseDown={handleEventStart}
                             onTouchStart={handleEventStart}
+                            data-testid='bottom-modal-bar-container'
                         >
-                            {customBar ? (
+                            {customBar !== undefined ? (
                                 customBar
                             ) : (
                                 <div
-                                    className={`${styles.bar} ${classNameBar}`}
+                                    className={`${styles.bar} ${classNameBar ? classNameBar : ""}`}
+                                    data-testid='bottom-modal-bar'
                                 />
                             )}
                         </div>

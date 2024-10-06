@@ -29,6 +29,7 @@ function App() {
             <ModalBottomSheet
                 visible={visible}
                 onHide={() => setVisible(false)}
+                transition={300}
             >
                 <div className='content'>{TEXT_LOREM}</div>
             </ModalBottomSheet>
