@@ -33,7 +33,7 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
     onHide,
     children,
     transition = 200,
-    minHeight = 200,
+    minHeight,
     maxHeight,
     classNameBar,
     classNameBarContainer,
