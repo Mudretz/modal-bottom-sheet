@@ -1,0 +1,41 @@
+name: Build and Tag Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Загружаем все ветки
+
+      - name: Set git user
+        run: |
+          git config user.email "${{ github.event.pusher.email }}"
+          git config user.name "${{ github.actor }}"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the project
+        run: npm run build
+
+      - name: Add built files and commit
+        run: |
+          git add .
+          git commit -m "Добавление артефактов сборки"
+
+      - name: Push updated tag
+        run: |
+          # Извлекаем имя тега из github.ref
+          CURRENT_TAG=$(echo "${{ github.ref }}" | sed 's|refs/tags/||')
+          git checkout main
+          git push origin main
+          git tag -f $CURRENT_TAG  # Перезапись тега с обновлёнными файлами
+          git push origin --tags --force
