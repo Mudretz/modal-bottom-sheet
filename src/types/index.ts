@@ -39,4 +39,10 @@ export type ModalBottomSheetProps = {
     minHeight?: number;
     classNameModalContainer?: string;
     classNameBarContainer?: string;
+    onModalHide?: () => void;
+    onModalShow?: () => void;
+    onMoveStart?: (event: React.TouchEvent | React.MouseEvent) => void;
+    onMoveEnd?: (event: React.TouchEvent | React.MouseEvent) => void;
+    onSwipeComplete?: (event: React.TouchEvent | React.MouseEvent) => void;
+    onSwipeCancel?: (event: React.TouchEvent | React.MouseEvent) => void;
 } & CustomBar;

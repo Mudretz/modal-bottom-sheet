@@ -19,7 +19,12 @@ import styles from "./styles.module.css";
  * @param {string} [classNameBarContainer] - CSS-класс для контейнера бара.
  * @param {string} [classNameModalContainer] - CSS-класс для контейнера свайпера.
  * @param {React.ReactNode} [customBar] - Кастомный элемент бара.
- *
+ * @param {() => void} [onModalHide] - Колбэк, вызываемый при скрытии модального окна.
+ * @param {() => void} [onModalShow] - Колбэк, вызываемый при показе модального окна.
+ * @param {(event: React.TouchEvent | React.MouseEvent) => void} [onMoveStart] - Колбэк, вызываемый при начале перетаскивания.
+ * @param {(event: React.TouchEvent | React.MouseEvent) => void} [onMoveEnd] - Колбэк, вызываемый при завершении перетаскивания.
+ * @param {(event: React.TouchEvent | React.MouseEvent) => void} [onSwipeComplete] - Колбэк, вызываемый при завершении свайпа (когда высота превышает максимальную).
+ * @param {(event: React.TouchEvent | React.MouseEvent) => void} [onSwipeCancel] - Колбэк, вызываемый при отмене свайпа (когда высота меньше минимальной).
  * @returns {JSX.Element} Возвращает JSX элемент компонента `ModalBottomSheet`.
  */
 
@@ -34,6 +39,12 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
     classNameBarContainer,
     classNameModalContainer,
     customBar,
+    onModalHide,
+    onModalShow,
+    onMoveStart,
+    onMoveEnd,
+    onSwipeComplete,
+    onSwipeCancel,
 }) => {
     const { height: windowHeight } = useWindowDimensions();
     const [shouldRender, setShouldRender] = useState(visible);
@@ -42,6 +53,7 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
     const startY = useRef(0);
     const swiperRef = useRef<HTMLDivElement>(null);
     const childrenRef = useRef<HTMLDivElement>(null);
+    const swipeCompleted = useRef(false);
     const currentMinHeight = minHeight ? minHeight : windowHeight * 0.3;
     const currentMaxHeight = maxHeight ? maxHeight : windowHeight * 0.8;
 
@@ -51,6 +63,7 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
             : event.clientY;
         isResizing.current = true;
         startY.current = clientY; // Сохранение начальной позиции курсора
+        onMoveStart && onMoveStart(event);
     };
 
     useEffect(() => {
@@ -71,13 +84,13 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
                         setHeight(currentMaxHeight);
                     }
                 }
-            }, transition);
+            });
             document.body.style.overflow = "hidden"; // Убираем скролл заднего фона
         }
         return () => {
             document.body.style.overflow = "";
         };
-    }, [visible, childrenRef.current]);
+    }, [visible]);
 
     const handleEventMove = (event: React.TouchEvent | React.MouseEvent) => {
         const clientY = isTouchEvent(event)
@@ -87,11 +100,19 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
             const deltaY = clientY - startY.current; // Разница в положении курсора
             if (windowHeight * 0.2 >= height) {
                 isResizing.current = false;
+                onSwipeCancel && onSwipeCancel(event);
                 onHide();
             } else if (currentMaxHeight >= height - deltaY) {
                 setHeight((prevHeight) => prevHeight - deltaY);
+                swipeCompleted.current = false;
+                startY.current = clientY; // Обновление позиции курсора
+            } else if (
+                currentMaxHeight <= height - deltaY &&
+                !swipeCompleted.current
+            ) {
+                onSwipeComplete && onSwipeComplete(event);
+                swipeCompleted.current = true;
             }
-            startY.current = clientY; // Обновление позиции курсора
         }
     };
 
@@ -99,10 +120,16 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
         if (!visible) {
             setShouldRender(false); // Убираем элемент из DOM после завершения анимации
             setHeight(0);
+            onModalHide && onModalHide();
+        } else {
+            onModalShow && onModalShow();
         }
     };
 
-    const handleEventEnd = () => {
+    const handleEventEnd = (event: React.TouchEvent | React.MouseEvent) => {
+        if (isResizing.current) {
+            onMoveEnd && onMoveEnd(event);
+        }
         isResizing.current = false; // Завершение перетаскивания
     };
 

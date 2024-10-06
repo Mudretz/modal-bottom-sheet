@@ -29,6 +29,25 @@ function App() {
             <ModalBottomSheet
                 visible={visible}
                 onHide={() => setVisible(false)}
+                transition={500}
+                onModalHide={() => {
+                    console.log("@onModalHide Модальное окно закрыто");
+                }}
+                onModalShow={() => {
+                    console.log("@onModalShow Модальное окно открыто");
+                }}
+                onMoveStart={() => {
+                    console.log("@onMoveStart Начал перетаскивание");
+                }}
+                onMoveEnd={() => {
+                    console.log("@onMoveEnd Завершил перетаскивание");
+                }}
+                onSwipeComplete={() => {
+                    console.log("@onSwipeComplete Достиг максимальной высоты");
+                }}
+                onSwipeCancel={() => {
+                    console.log("@onSwipeCancel Достиг минимальной высоты");
+                }}
             >
                 <div className='content'>{TEXT_LOREM}</div>
             </ModalBottomSheet>
