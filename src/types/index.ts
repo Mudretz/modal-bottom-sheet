@@ -30,13 +30,13 @@ type CustomBar =
           classNameBar?: string;
       };
 
-export type SwiperProps = {
+export type ModalBottomSheetProps = {
     visible: boolean;
     onHide: () => void;
     children: React.ReactNode;
     transition?: number;
     maxHeight?: number;
     minHeight?: number;
-    classNameSwipeContainer?: string;
+    classNameModalContainer?: string;
     classNameBarContainer?: string;
 } & CustomBar;

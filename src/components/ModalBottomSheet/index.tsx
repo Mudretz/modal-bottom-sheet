@@ -3,10 +3,10 @@ import { FC, useEffect, useMemo, useRef, useState } from "react";
 import { isTouchEvent } from "../../utils/isTouchEvent";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import styles from "./styles.module.css";
-import { SwiperProps } from "../../types";
+import { ModalBottomSheetProps } from "../../types";
 
 /**
- * @name SwiperBottomSheet
+ * @name ModalBottomSheet
  * @description Cвайпер, отображающий контент с возможностью кастомизации бара.
  *
  * @param {boolean} visible - Определяет, виден ли свайпер.
@@ -17,13 +17,13 @@ import { SwiperProps } from "../../types";
  * @param {number} [maxHeight] - Максимальная высота свайпера (в пикселях).
  * @param {string} [classNameBar] - CSS-класс для кастомного бара.
  * @param {string} [classNameBarContainer] - CSS-класс для контейнера бара.
- * @param {string} [classNameSwipeContainer] - CSS-класс для контейнера свайпера.
+ * @param {string} [classNameModalContainer] - CSS-класс для контейнера свайпера.
  * @param {React.ReactNode} [customBar] - Кастомный элемент бара.
  *
- * @returns {JSX.Element} Возвращает JSX элемент компонента `SwiperBottomSheet`.
+ * @returns {JSX.Element} Возвращает JSX элемент компонента `ModalBottomSheet`.
  */
 
-export const SwiperBottomSheet: FC<SwiperProps> = ({
+export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
     visible,
     onHide,
     children,
@@ -32,7 +32,7 @@ export const SwiperBottomSheet: FC<SwiperProps> = ({
     maxHeight,
     classNameBar,
     classNameBarContainer,
-    classNameSwipeContainer,
+    classNameModalContainer,
     customBar,
 }) => {
     const { height: windowHeight } = useWindowDimensions();
@@ -134,7 +134,7 @@ export const SwiperBottomSheet: FC<SwiperProps> = ({
                     onTouchEnd={handleEventEnd}
                 >
                     <div
-                        className={`${styles.swiperContainer} ${classNameSwipeContainer}`}
+                        className={`${styles.swiperContainer} ${classNameModalContainer}`}
                         style={{
                             height: visible ? height : 0,
                             transition: isResizing.current

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
-import { SwiperBottomSheet } from "./components/SwiperBottomSheet";
+import { ModalBottomSheet } from "./components/ModalBottomSheet";
 import { TEXT_LOREM } from "./constants";
 
 function App() {
@@ -22,16 +22,16 @@ function App() {
                 </a>
             </div>
             <h1>Vite + React</h1>
-            <h2>Библиотека Swiper bottom sheet</h2>
+            <h2>Библиотека Modal bottom sheet</h2>
             <div className='card'>
                 <button onClick={() => setVisible(true)}>Открыть</button>
             </div>
-            <SwiperBottomSheet
+            <ModalBottomSheet
                 visible={visible}
                 onHide={() => setVisible(false)}
             >
                 <div className='content'>{TEXT_LOREM}</div>
-            </SwiperBottomSheet>
+            </ModalBottomSheet>
         </div>
     );
 }

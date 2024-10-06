@@ -9,7 +9,7 @@
     align-items: flex-end;
 }
 
-.swiperContainer {
+.modalContainer {
     width: 100vw;
     display: flex;
     flex-direction: column;
@@ -22,7 +22,7 @@
     overflow-x: auto;
 }
 
-.swiperContainer::-webkit-scrollbar {
+.modalContainer::-webkit-scrollbar {
     display: none; /* Для Chrome, Safari и других WebKit-браузеров */
 }
 
