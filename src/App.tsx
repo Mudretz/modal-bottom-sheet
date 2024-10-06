@@ -1,7 +1,8 @@
 import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
-import { Swiper } from "./components/SwiperBottomSheet";
+import { SwiperBottomSheet } from "./components/SwiperBottomSheet";
+import { TEXT_LOREM } from "./constants";
 
 function App() {
     const [visible, setVisible] = useState(false);
@@ -25,7 +26,12 @@ function App() {
             <div className='card'>
                 <button onClick={() => setVisible(true)}>Открыть</button>
             </div>
-            <Swiper visible={visible} onHide={() => setVisible(false)} />
+            <SwiperBottomSheet
+                visible={visible}
+                onHide={() => setVisible(false)}
+            >
+                <div className='content'>{TEXT_LOREM}</div>
+            </SwiperBottomSheet>
         </div>
     );
 }

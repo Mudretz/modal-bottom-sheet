@@ -11,12 +11,19 @@
 
 .swiperContainer {
     width: 100vw;
+    display: flex;
+    flex-direction: column;
     background-color: white;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
     -webkit-box-shadow: 0px -5px 10px 1px rgba(34, 60, 80, 0.26);
     -moz-box-shadow: 0px -5px 10px 1px rgba(34, 60, 80, 0.26);
     box-shadow: 0px -5px 10px 1px rgba(34, 60, 80, 0.26);
+    overflow-x: auto;
+}
+
+.swiperContainer::-webkit-scrollbar {
+    display: none; /* Для Chrome, Safari и других WebKit-браузеров */
 }
 
 .bar {
@@ -27,8 +34,15 @@
 }
 
 .barContainer {
-    padding: 5px;
+    position: sticky;
+    top: 0;
+    background-color: white;
+    padding: 10px;
     display: flex;
     justify-items: center;
     justify-content: center;
+}
+
+.children {
+    flex: 1;
 }

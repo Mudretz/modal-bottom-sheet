@@ -1,29 +1,49 @@
 import { createPortal } from "react-dom";
-import {
-    FC,
-    PropsWithChildren,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from "react";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
 import { isTouchEvent } from "../../utils/isTouchEvent";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import styles from "./styles.module.css";
+import { SwiperProps } from "../../types";
 
-interface SwiperProps extends PropsWithChildren {
-    visible: boolean;
-    onHide: () => void;
-}
+/**
+ * @name SwiperBottomSheet
+ * @description Cвайпер, отображающий контент с возможностью кастомизации бара.
+ *
+ * @param {boolean} visible - Определяет, виден ли свайпер.
+ * @param {() => void} onHide - Функция, вызываемая для скрытия свайпера.
+ * @param {React.ReactNode} children - Контент, который будет отображаться внутри свайпера.
+ * @param {number} [transition=200] - Длительность анимации перехода (в миллисекундах). По умолчанию 200мс.
+ * @param {number} [minHeight=200] - Минимальная высота свайпера (в пикселях). По умолчанию 200px.
+ * @param {number} [maxHeight] - Максимальная высота свайпера (в пикселях).
+ * @param {string} [classNameBar] - CSS-класс для кастомного бара.
+ * @param {string} [classNameBarContainer] - CSS-класс для контейнера бара.
+ * @param {string} [classNameSwipeContainer] - CSS-класс для контейнера свайпера.
+ * @param {React.ReactNode} [customBar] - Кастомный элемент бара.
+ *
+ * @returns {JSX.Element} Возвращает JSX элемент компонента `SwiperBottomSheet`.
+ */
 
-export const Swiper: FC<SwiperProps> = ({ visible, onHide, children }) => {
+export const SwiperBottomSheet: FC<SwiperProps> = ({
+    visible,
+    onHide,
+    children,
+    transition = 200,
+    minHeight = 200,
+    maxHeight,
+    classNameBar,
+    classNameBarContainer,
+    classNameSwipeContainer,
+    customBar,
+}) => {
     const { height: windowHeight } = useWindowDimensions();
     const [shouldRender, setShouldRender] = useState(visible);
     const [height, setHeight] = useState(0); // Изначальная высота элемента
     const isResizing = useRef(false); // Для отслеживания состояния перетаскивания
     const startY = useRef(0);
     const swiperRef = useRef<HTMLDivElement>(null);
-    const transition = 200;
+    const childrenRef = useRef<HTMLDivElement>(null);
+    const currentMinHeight = minHeight ? minHeight : windowHeight * 0.3;
+    const currentMaxHeight = maxHeight ? maxHeight : windowHeight * 0.8;
 
     const handleEventStart = (event: React.TouchEvent | React.MouseEvent) => {
         const clientY = isTouchEvent(event)
@@ -37,14 +57,27 @@ export const Swiper: FC<SwiperProps> = ({ visible, onHide, children }) => {
         if (visible) {
             setShouldRender(true); // Рендерим элемент при показе
             setTimeout(() => {
-                setHeight(windowHeight * 0.8);
+                if (childrenRef.current) {
+                    const { height } =
+                        childrenRef.current.getBoundingClientRect();
+                    if (
+                        height >= currentMinHeight &&
+                        height <= currentMaxHeight
+                    ) {
+                        setHeight(height);
+                    } else if (height < currentMinHeight) {
+                        setHeight(currentMinHeight);
+                    } else if (height > currentMaxHeight) {
+                        setHeight(currentMaxHeight);
+                    }
+                }
             }, transition);
             document.body.style.overflow = "hidden"; // Убираем скролл заднего фона
         }
         return () => {
             document.body.style.overflow = "";
         };
-    }, [visible]);
+    }, [visible, childrenRef.current]);
 
     const handleEventMove = (event: React.TouchEvent | React.MouseEvent) => {
         const clientY = isTouchEvent(event)
@@ -55,7 +88,7 @@ export const Swiper: FC<SwiperProps> = ({ visible, onHide, children }) => {
             if (windowHeight * 0.2 >= height) {
                 isResizing.current = false;
                 onHide();
-            } else if (windowHeight * 0.8 >= height - deltaY) {
+            } else if (currentMaxHeight >= height - deltaY) {
                 setHeight((prevHeight) => prevHeight - deltaY);
             }
             startY.current = clientY; // Обновление позиции курсора
@@ -77,7 +110,7 @@ export const Swiper: FC<SwiperProps> = ({ visible, onHide, children }) => {
         return children;
     }, [children]);
 
-    if (!shouldRender) return null;
+    if (!shouldRender || !children) return null;
 
     return (
         <>
@@ -101,7 +134,7 @@ export const Swiper: FC<SwiperProps> = ({ visible, onHide, children }) => {
                     onTouchEnd={handleEventEnd}
                 >
                     <div
-                        className={styles.swiperContainer}
+                        className={`${styles.swiperContainer} ${classNameSwipeContainer}`}
                         style={{
                             height: visible ? height : 0,
                             transition: isResizing.current
@@ -115,13 +148,21 @@ export const Swiper: FC<SwiperProps> = ({ visible, onHide, children }) => {
                         onTransitionEnd={onAnimationEnd}
                     >
                         <div
-                            className={styles.barContainer}
+                            className={`${styles.barContainer} ${classNameBarContainer}`}
                             onMouseDown={handleEventStart}
                             onTouchStart={handleEventStart}
                         >
-                            <div className={styles.bar} />
+                            {customBar ? (
+                                customBar
+                            ) : (
+                                <div
+                                    className={`${styles.bar} ${classNameBar}`}
+                                />
+                            )}
                         </div>
-                        {renderChildren}
+                        <div ref={childrenRef} className={styles.children}>
+                            {renderChildren}
+                        </div>
                     </div>
                 </div>,
                 document.body,
