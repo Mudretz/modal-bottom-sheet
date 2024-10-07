@@ -8,7 +8,7 @@ function App() {
     return (
         <div className='container'>
             <h1>Vite + React</h1>
-            <h2>Библиотека Modal bottom sheet</h2>
+            <h2>Библиотека Modal bottom sheet v.1.0.1</h2>
             <div className='card'>
                 <button onClick={() => setVisible(true)}>Открыть</button>
             </div>
