@@ -26,16 +26,13 @@ jobs:
       - name: Build the project
         run: npm run build
 
-      - name: Add built files and commit
-        run: |
-          git add .
-          git commit -m "Добавление артефактов сборки"
-
       - name: Push updated tag
         run: |
           # Извлекаем имя тега из github.ref
           CURRENT_TAG=$(echo "${{ github.ref }}" | sed 's|refs/tags/||')
           git checkout main
+          git add .
+          git commit -m "Добавление артефактов сборки"
           git push origin main
           git tag -f $CURRENT_TAG  # Перезапись тега с обновлёнными файлами
           git push origin --tags --force
