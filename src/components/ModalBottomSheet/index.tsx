@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useRef, useState } from "react";
+import { FC, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { isTouchEvent } from "../../utils/isTouchEvent";
 import { ModalBottomSheetProps } from "../../types";
@@ -67,7 +67,7 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
         onMoveStart && onMoveStart(event);
     };
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (visible) {
             setShouldRender(true); // Рендерим элемент при показе
             setTimeout(() => {
@@ -86,7 +86,7 @@ export const ModalBottomSheet: FC<ModalBottomSheetProps> = ({
                     }
                     childrenRef.current.style.overflowX = "auto";
                 }
-            }, 50);
+            });
             document.body.style.overflow = "hidden"; // Убираем скролл заднего фона
         }
         return () => {
